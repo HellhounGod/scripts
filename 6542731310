@@ -1,0 +1,72 @@
+_G.AutoSell = false;
+_G.Qlist = false;
+local Rate = ""
+local WSpeed = 24
+
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/AikaV3rm/UiLib/master/Lib.lua')))()
+
+local w = library:CreateWindow("GROM CHEAT") -- Creates the window
+
+local b = w:CreateFolder("Main") -- Creates the folder(U will put here your buttons,etc)
+
+local c = w:CreateFolder("Sell")
+
+local d = w:CreateFolder("Misc")
+
+d:Bind("Open Quest list",Enum.KeyCode.V,function(bool) --Default bind
+    local qgui = game:GetService("Players").InfernoBooster2.PlayerGui.MainUI.QuestList
+	if qgui.Visible == true then
+	qgui.Visible = false
+	else
+	qgui.Visible = true
+	end
+end)
+
+b:Slider("WalkSpeed:",{ 
+    min = 24; -- min value of the slider
+    max = 240; -- max value of the slider
+    precise = false; -- max 2 decimals
+},function(value)
+    WSpeed = value	
+	if value then
+		WS();
+	end
+end)
+
+c:Slider("Min Sell Price:",{ 
+    min = 220; -- min value of the slider
+    max = 250; -- max value of the slider
+    precise = false; -- max 2 decimals
+},function(value)
+    Rate = value	
+end)
+
+c:Toggle("Auto Sell:",function(bool)
+    _G.AutoSell = bool
+    print("Auto Sell:", bool)
+	if bool then
+		ASell();
+	end
+end)
+
+
+d:DestroyGui()
+
+function ASell()
+	spawn(function()
+			local rate = workspace.__Locations.Exchange.Rate
+			rate:GetPropertyChangedSignal("Value"):Connect(function(i,v)
+			if rate.Value >= Rate then
+				if _G.AutoSell == true then
+				game.ReplicatedStorage.SpecWork.Shared.Network.Exchange:FireServer("Exchange",{Rate=rate.Value})
+				end
+			end
+		end)
+	end)
+end
+
+function WS()
+	spawn(function()
+		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = WSpeed
+	end)
+end
