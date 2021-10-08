@@ -29,7 +29,7 @@ end)
 
 d:Bind("Fast Tp",Enum.KeyCode.F,function(fast) --Default bind
     if _G.FastTP == 4 then
-	_G.FastTP = 1
+	_G.FastTP = 0
 	else
 	_G.FastTP += 1
 	end
@@ -66,7 +66,7 @@ c:Toggle("Auto Sell:",function(bool)
 	end
 end)
 
-t:Dropdown("Shop select:",{1,2,3,4},true,function(TpList) --true/false, replaces the current title "Dropdown" with the option that t
+t:Dropdown("Shop select:",{1,2,3,4,5},true,function(TpList) --true/false, replaces the current title "Dropdown" with the option that t
     TPSelect = TpList
 	print(TPSelect)
 end)
@@ -76,6 +76,43 @@ t:Button("Teleport to shop",function()
 		TP();
 	end
 end)
+
+--[[
+
+b:Button("Button",function()
+    print("Elym Winning")
+end)
+
+b:Toggle("Toggle",function(bool)
+    shared.toggle = bool
+    print(shared.toggle)
+end)
+
+b:Slider("Slider",{
+    min = 1; -- min value of the slider
+    max = 10; -- max value of the slider
+    precise = true; -- max 2 decimals
+},function(value)
+    print(value)
+end)
+
+b:Dropdown("Dropdown",{"A","B","C"},true,function(mob) --true/false, replaces the current title "Dropdown" with the option that t
+    print(mob)
+end)
+
+b:Bind("Bind",Enum.KeyCode.C,function() --Default bind
+    print("Yes")
+end)
+
+b:ColorPicker("ColorPicker",Color3.fromRGB(255,0,0),function(color) --Default color
+    print(color)
+end)
+
+b:Box("Box","number",function(value) -- "number" or "string"
+    print(value)
+end)
+
+]]--
 
 d:DestroyGui()
 
@@ -111,6 +148,8 @@ function TP()
 		plr.CFrame = CFrame.new(-141.077, 57.3914, -478.835)
 		elseif TPSelect == "4" then
 		plr.CFrame = CFrame.new(-326.688, 57.1859, -694.578)
+		elseif TPSelect == "5" then
+		plr.CFrame = CFrame.new(-546.759, 57.1859, -402.241)
 		else
 		print("Tp Not working!")
 		end
@@ -130,6 +169,8 @@ function FsTP()
 		plr.CFrame = CFrame.new(-141.077, 57.3914, -478.835)
 		elseif _G.FastTP == 4 then
 		plr.CFrame = CFrame.new(-326.688, 57.1859, -694.578)
+		elseif TPSelect == 5 then
+		plr.CFrame = CFrame.new(-546.759, 57.1859, -402.241)
 		else
 		print("Tp Not working!")
 		end
