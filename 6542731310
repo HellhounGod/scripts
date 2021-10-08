@@ -2,7 +2,7 @@ _G.AutoSell = false;
 _G.Qlist = false;
 local Rate = ""
 local WSpeed = 24
-local TPSelect = 0
+local TPSelect = ""
 
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/AikaV3rm/UiLib/master/Lib.lua')))()
 
@@ -54,6 +54,7 @@ end)
 
 t:Dropdown("Shop select:",{"1","2","3","4","5 (nw)","6 (nw)","7 (nw)","8 (nw)","9 (nw)"},true,function(tps) --true/false, replaces the current title "Dropdown" with the option that t
     TPSelect = tps
+	print("TPSelect:",tps)
 end)
 
 t:Button("Teleport to shop",function()
@@ -61,6 +62,43 @@ t:Button("Teleport to shop",function()
 		TP();
 	end
 end)
+
+--[[
+
+b:Button("Button",function()
+    print("Elym Winning")
+end)
+
+b:Toggle("Toggle",function(bool)
+    shared.toggle = bool
+    print(shared.toggle)
+end)
+
+b:Slider("Slider",{
+    min = 1; -- min value of the slider
+    max = 10; -- max value of the slider
+    precise = true; -- max 2 decimals
+},function(value)
+    print(value)
+end)
+
+b:Dropdown("Dropdown",{"A","B","C"},true,function(mob) --true/false, replaces the current title "Dropdown" with the option that t
+    print(mob)
+end)
+
+b:Bind("Bind",Enum.KeyCode.C,function() --Default bind
+    print("Yes")
+end)
+
+b:ColorPicker("ColorPicker",Color3.fromRGB(255,0,0),function(color) --Default color
+    print(color)
+end)
+
+b:Box("Box","number",function(value) -- "number" or "string"
+    print(value)
+end)
+
+]]--
 
 d:DestroyGui()
 
