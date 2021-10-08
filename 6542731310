@@ -29,7 +29,7 @@ end)
 
 d:Bind("Fast Tp",Enum.KeyCode.F,function(fast) --Default bind
     if _G.FastTP == 4 then
-	_G.FastTP = 0
+	_G.FastTP = 1
 	else
 	_G.FastTP += 1
 	end
