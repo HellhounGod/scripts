@@ -1,8 +1,10 @@
 _G.AutoSell = false;
 _G.Qlist = false;
+_G.FastTP = 0;
 local Rate = ""
 local WSpeed = 24
-local TPSelect = ""
+local TPSelect = "0"
+
 
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/AikaV3rm/UiLib/master/Lib.lua')))()
 
@@ -22,6 +24,18 @@ d:Bind("Open Quest list",Enum.KeyCode.V,function() --Default bind
 	qgui.Visible = false
 	else
 	qgui.Visible = true
+	end
+end)
+
+d:Bind("Fast Tp",Enum.KeyCode.F,function(fast) --Default bind
+    if _G.FastTP == 4 then
+	_G.FastTP = 0
+	else
+	_G.FastTP += 1
+	end
+	print(_G.FastTP)
+	if true then
+		FsTP();
 	end
 end)
 
@@ -52,7 +66,7 @@ c:Toggle("Auto Sell:",function(bool)
 	end
 end)
 
-t:Dropdown("Shop select:",{"1","2","3","4","5 (nw)","6 (nw)","7 (nw)","8 (nw)","9 (nw)"},true,function(TpList) --true/false, replaces the current title "Dropdown" with the option that t
+t:Dropdown("Shop select:",{1,2,3,4},true,function(TpList) --true/false, replaces the current title "Dropdown" with the option that t
     TPSelect = TpList
 	print(TPSelect)
 end)
@@ -87,7 +101,7 @@ end
 function TP()
 	spawn(function()
 		local plr = game.Players.LocalPlayer.Character.HumanoidRootPart
-		if TPSelect == 0 then
+		if TPSelect == "0" then
 		print("Shop not selected")
 		elseif TPSelect == "1" then
 		plr.CFrame = CFrame.new(27.3963, 58.3405, 211.623)
@@ -96,6 +110,25 @@ function TP()
 		elseif TPSelect == "3" then
 		plr.CFrame = CFrame.new(-141.077, 57.3914, -478.835)
 		elseif TPSelect == "4" then
+		plr.CFrame = CFrame.new(-326.688, 57.1859, -694.578)
+		else
+		print("Tp Not working!")
+		end
+	end)
+end
+
+function FsTP()
+	spawn(function()
+		local plr = game.Players.LocalPlayer.Character.HumanoidRootPart
+		if _G.FastTP == 0 then
+		print("Shop not selected")
+		elseif _G.FastTP == 1 then
+		plr.CFrame = CFrame.new(27.3963, 58.3405, 211.623)
+		elseif _G.FastTP == 2 then
+		plr.CFrame = CFrame.new(-240.471, 57.0989, -292.598)
+		elseif _G.FastTP == 3 then
+		plr.CFrame = CFrame.new(-141.077, 57.3914, -478.835)
+		elseif _G.FastTP == 4 then
 		plr.CFrame = CFrame.new(-326.688, 57.1859, -694.578)
 		else
 		print("Tp Not working!")
