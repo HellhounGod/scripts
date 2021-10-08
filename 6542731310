@@ -63,43 +63,6 @@ t:Button("Teleport to shop",function()
 	end
 end)
 
---[[
-
-b:Button("Button",function()
-    print("Elym Winning")
-end)
-
-b:Toggle("Toggle",function(bool)
-    shared.toggle = bool
-    print(shared.toggle)
-end)
-
-b:Slider("Slider",{
-    min = 1; -- min value of the slider
-    max = 10; -- max value of the slider
-    precise = true; -- max 2 decimals
-},function(value)
-    print(value)
-end)
-
-b:Dropdown("Dropdown",{"A","B","C"},true,function(mob) --true/false, replaces the current title "Dropdown" with the option that t
-    print(mob)
-end)
-
-b:Bind("Bind",Enum.KeyCode.C,function() --Default bind
-    print("Yes")
-end)
-
-b:ColorPicker("ColorPicker",Color3.fromRGB(255,0,0),function(color) --Default color
-    print(color)
-end)
-
-b:Box("Box","number",function(value) -- "number" or "string"
-    print(value)
-end)
-
-]]--
-
 d:DestroyGui()
 
 function ASell()
@@ -126,18 +89,16 @@ function TP()
 		local plr = game.Players.LocalPlayer.Character.HumanoidRootPart
 		if TPSelect == 0 then
 		print("Shop not selected")
-		elseif TPSelect == 1 then
+		elseif TPSelect == "1" then
 		plr.CFrame = CFrame.new(27.3963, 58.3405, 211.623)
-		elseif TPSelect == 2 then
+		elseif TPSelect == "2" then
 		plr.CFrame = CFrame.new(-240.471, 57.0989, -292.598)
-		elseif TPSelect == 3 then
+		elseif TPSelect == "3" then
 		plr.CFrame = CFrame.new(-141.077, 57.3914, -478.835)
-		elseif TPSelect == 4 then
+		elseif TPSelect == "4" then
 		plr.CFrame = CFrame.new(-326.688, 57.1859, -694.578)
 		else
 		print("Tp Not working!")
 		end
 	end)
 end
-
-
