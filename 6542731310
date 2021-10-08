@@ -59,7 +59,7 @@ c:Toggle("Auto Sell:",function(bool)
 	end
 end)
 
-t:Dropdown("Shop select:",{1,2,3,4,5},true,function(TpList) --true/false, replaces the current title "Dropdown" with the option that t
+t:Dropdown("Shop select:",{1,2,3,4,5,6},true,function(TpList) --true/false, replaces the current title "Dropdown" with the option that t
     TPSelect = TpList
 	print(TPSelect)
 end)
@@ -143,6 +143,8 @@ function TP()
 		plr.CFrame = CFrame.new(-326.688, 57.1859, -694.578)
 		elseif TPSelect == "5" then
 		plr.CFrame = CFrame.new(-546.759, 57.1859, -402.241)
+		elseif TPSelect == "6" then
+		plr.CFrame = CFrame.new(-800.166, 104.385, -445.619)
 		else
 		print("Tp Not working!")
 		end
