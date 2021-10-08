@@ -3,6 +3,7 @@ _G.Qlist = false;
 local Rate = ""
 local WSpeed = 24
 local TPSelect = ""
+local EggL = ""
 
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/AikaV3rm/UiLib/master/Lib.lua')))()
 
@@ -55,6 +56,11 @@ end)
 t:Dropdown("Shop select:",{"1","2","3","4","5 (nw)","6 (nw)","7 (nw)","8 (nw)","9 (nw)"},true,function(tps) --true/false, replaces the current title "Dropdown" with the option that t
     TPSelect = tps
 	print("TPSelect:", TPSelect)
+end)
+
+t:Dropdown("Egg's Select",{"Sao Egg","My Hero Academia Egg","Demon Slayer Egg","Attack On Titan Egg","JoJo Stand Egg","JoJo Egg","Naruto Egg","Dragon Ball Egg","One Punch","One Piece Egg","VIP Egg","Shaggy Egg"},true,function(EggList) --true/false, replaces the current title "Dropdown" with the option that t
+    EggL = EggList
+	print(EggL)
 end)
 
 t:Button("Teleport to shop",function()
