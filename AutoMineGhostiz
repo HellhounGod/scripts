@@ -2,7 +2,7 @@
 
 local AutoMine = false
 local MINING_ORE_NAME = 'stone'
-local DistFromOre = 5
+local DistFromOre = 4
 
 local LocalPlayer = game:GetService('Players').LocalPlayer
 local gameContentFolder = workspace:FindFirstChild('__GAME_CONTENT')
@@ -30,7 +30,7 @@ local function Mine()
 		local char = LocalPlayer.Character
 		local HRP = char.HumanoidRootPart
 		local Humanoid = char.Humanoid
-		
+
 		for _, ores in pairs(OreFolder:GetChildren()) do
 			if ores.Name:lower() == MINING_ORE_NAME:lower() then
 				for _, ore in pairs(ores:GetChildren()) do
@@ -45,13 +45,13 @@ local function Mine()
 				end
 			end
 		end
-		
+
 		for _,v in pairs(OreTarget:GetChildren()) do
 			if v:IsA('MeshPart') or v:IsA('BasePart') then
 				v.CanCollide = false
 			end
 		end
-		
+
 		if MinamalDistance >= 10 + DistFromOre / 2 then
 			local direction = (HRP.Position - OreTarget.Position).Unit
 			local offset = direction * DistFromOre 
@@ -70,7 +70,7 @@ local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
 local MyScript = PhantomForcesWindow:NewSection("Main")
 
 
-MyScript:CreateSlider("DistFromOre", 0, 10, 5, false, function(value)
+MyScript:CreateSlider("DistFromOre", 1, 7, 4, false, function(value)
 	DistFromOre = value
 end)
 
@@ -78,6 +78,12 @@ MyScript:CreateToggle("Auto Mine", function(value)
 	AutoMine = value
 	Mine()
 end)
+
+for name, value in ipairs(OreSearch) do
+	MyScript:CreateButton(name, function()
+		print(value)
+	end)
+end
 
 MyScript:CreateDropdown('Select Ore', OreSearch, 1, function(text)
 	MINING_ORE_NAME = text
@@ -91,4 +97,3 @@ MyScript:CreateButton("DESTROY GUI", function()
 		end
 	end
 end)
-
