@@ -1,8 +1,7 @@
--- B S M 2 AutoMine
-
+print('B S M 2 AutoMine v. 1.2.0.')
+task.wait(1)
 local AutoMine = false
-local MINING_ORE_NAME = 'stone'
-local DistFromOre = 5
+local DistFromOre = 4
 
 local LocalPlayer = game:GetService('Players').LocalPlayer
 local gameContentFolder = workspace:FindFirstChild('__GAME_CONTENT')
@@ -18,7 +17,8 @@ for _,v in pairs(gameContentFolder:GetDescendants()) do
 end
 
 for _, ores in pairs(OreFolder:GetChildren()) do
-	table.insert(OreSearch, ores.Name:lower())
+	--table.insert(OreSearch, ores.Name:lower())
+	OreSearch[ores.Name:lower()] = false
 end
 
 
@@ -32,7 +32,7 @@ local function Mine()
 		local Humanoid = char.Humanoid
 
 		for _, ores in pairs(OreFolder:GetChildren()) do
-			if ores.Name:lower() == MINING_ORE_NAME:lower() then
+			if OreSearch[ores.Name:lower()] then
 				for _, ore in pairs(ores:GetChildren()) do
 					if #ore.Block:GetChildren() >= 4 then
 						local TouchPart = ore.Touch
@@ -52,7 +52,7 @@ local function Mine()
 			end
 		end
 
-		if MinamalDistance >= 10 + DistFromOre / 2 then
+		if MinamalDistance >= DistFromOre + 1 then
 			local direction = (HRP.Position - OreTarget.Position).Unit
 			local offset = direction * DistFromOre 
 			local targetPosition = OreTarget.Position + offset
@@ -63,6 +63,7 @@ local function Mine()
 	end
 end
 
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
 
 local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
@@ -70,7 +71,7 @@ local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
 local MyScript = PhantomForcesWindow:NewSection("Main")
 
 
-MyScript:CreateSlider("DistFromOre", 0, 10, 5, false, function(value)
+MyScript:CreateSlider("DistFromOre", 1, 7, 4, false, function(value)
 	DistFromOre = value
 end)
 
@@ -79,9 +80,12 @@ MyScript:CreateToggle("Auto Mine", function(value)
 	Mine()
 end)
 
-MyScript:CreateDropdown('Select Ore', OreSearch, 1, function(text)
-	MINING_ORE_NAME = text
-end)
+for name, status in pairs(OreSearch) do
+	MyScript:CreateToggle(name:upper(), function(value)
+		OreSearch[name:lower()] = value
+	end)
+end
+
 
 MyScript:CreateButton("DESTROY GUI", function()
 	AutoMine = false
