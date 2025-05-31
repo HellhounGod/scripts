@@ -1,18 +1,18 @@
-print('B S M 2 AutoMine v. 1.4.0.')
+print('B S M 2 AutoMine v. 1.4.1.')
+local HttpService = game:GetService("HttpService")
+local LocalPlayer = game:GetService('Players').LocalPlayer
+local gameContentFolder = workspace:FindFirstChild('__GAME_CONTENT')
+local OreFolder = nil
 
-local SaveLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Config-Library/main/Main.lua"))()
 
-local MainSettings = {
+local Settings = {
 	AutoMine = false,
 	DistFromOre = 4,
 	OreSearch = {},
 }
 
-SaveLibrary:LoadConfig("BSM2.json")
-
-local LocalPlayer = game:GetService('Players').LocalPlayer
-local gameContentFolder = workspace:FindFirstChild('__GAME_CONTENT')
-local OreFolder = nil
+local loadedData = readfile("BSM2.json")
+Settings = HttpService:JSONDecode(loadedData)
 
 for _,v in pairs(gameContentFolder:GetDescendants()) do
 	if v:IsA('Folder') and v.Name:lower() == 'stone' then
@@ -21,16 +21,17 @@ for _,v in pairs(gameContentFolder:GetDescendants()) do
 	end
 end
 
+
 for _, ores in pairs(OreFolder:GetChildren()) do
 	--table.insert(OreSearch, ores.Name:lower())
-	if MainSettings['OreSearch'][ores.Name:lower()] == nil then
-		MainSettings['OreSearch'][ores.Name:lower()] = false
+	if Settings['OreSearch'][ores.Name:lower()] == nil then
+		Settings['OreSearch'][ores.Name:lower()] = false
 	end
 end
 
 
 local function Mine()
-	while MainSettings['AutoMine'] do
+	while Settings['AutoMine'] do
 		local OreTarget = nil
 		local MinamalDistance = math.huge
 
@@ -39,7 +40,7 @@ local function Mine()
 		local Humanoid = char.Humanoid
 
 		for _, ores in pairs(OreFolder:GetChildren()) do
-			if MainSettings['OreSearch'][ores.Name:lower()] then
+			if Settings['OreSearch'][ores.Name:lower()] then
 				for _, ore in pairs(ores:GetChildren()) do
 					if #ore.Block:GetChildren() >= 4 then
 						local TouchPart = ore.Touch
@@ -59,9 +60,9 @@ local function Mine()
 			end
 		end
 
-		if MinamalDistance >= MainSettings['DistFromOre'] + 1 then
+		if MinamalDistance >= DistFromOre + 1 then
 			local direction = (HRP.Position - OreTarget.Position).Unit
-			local offset = direction * MainSettings['DistFromOre']  
+			local offset = direction * DistFromOre 
 			local targetPosition = OreTarget.Position + offset
 			Humanoid:MoveTo(targetPosition)
 			Humanoid.MoveToFinished:Wait()
@@ -78,25 +79,29 @@ local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
 local Main = PhantomForcesWindow:NewSection("Main")
 local SelectOres = PhantomForcesWindow:NewSection("Main")
 
+Main:CreateButton("Save settings", function()
+	local jsonData = HttpService:JSONEncode(Settings)
+	writefile("BSM2.json", jsonData)
+end)
 
 Main:CreateToggle("Auto Mine", function(value)
-	MainSettings['AutoMine'] = value
+	Settings['AutoMine'] = value
 	Mine()
 end)
 
 Main:CreateSlider("DistFromOre", 1, 7, 4, false, function(value)
-	MainSettings['DistFromOre']  = value
+	DistFromOre = value
 end)
 
-for name, status in pairs(MainSettings['OreSearch']) do
+for name, status in pairs(Settings['OreSearch']) do
 	SelectOres:CreateToggle(name:upper(), function(value)
-		MainSettings['OreSearch'][name:lower()] = value
+		Settings['OreSearch'][name:lower()] = value
 	end)
 end
 
 
 Main:CreateButton("DESTROY GUI", function()
-	MainSettings['AutoMine'] = false
+	Settings['AutoMine'] = false
 	for i, v in pairs(game.CoreGui:GetChildren()) do
 		if v.Name == "WizardLibrary" then
 			v:Destroy()
@@ -105,5 +110,6 @@ Main:CreateButton("DESTROY GUI", function()
 end)
 
 game.Players.PlayerRemoving:Connect(function()
-	SaveLibrary:SaveConfig("BSM2.json", MainSettings)
+	local jsonData = HttpService:JSONEncode(Settings)
+	writefile("BSM2.json", jsonData)
 end)
