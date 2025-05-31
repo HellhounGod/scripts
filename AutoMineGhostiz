@@ -32,13 +32,15 @@ local function Mine()
 		local Humanoid = char.Humanoid
 		
 		for _, ores in pairs(OreFolder:GetChildren()) do
-			for _, ore in pairs(ores:GetChildren()) do
-				if #ore.Block:GetChildren() >= 4 and ore.Parent.Name:lower() == MINING_ORE_NAME:lower() then
-					local TouchPart = ore.Touch
-					local distance = (TouchPart.Position - HRP.Position).Magnitude
-					if distance < MinamalDistance then
-						OreTarget = TouchPart
-						MinamalDistance = distance
+			if ores.Name:lower() == MINING_ORE_NAME:lower() then
+				for _, ore in pairs(ores:GetChildren()) do
+					if #ore.Block:GetChildren() >= 4 then
+						local TouchPart = ore.Touch
+						local distance = (TouchPart.Position - HRP.Position).Magnitude
+						if distance < MinamalDistance then
+							OreTarget = TouchPart
+							MinamalDistance = distance
+						end
 					end
 				end
 			end
