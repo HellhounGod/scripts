@@ -1,0 +1,76 @@
+-- B S M 2 AutoMine
+
+local AutoMine = false
+local MINING_ORE_NAME = 'stone'
+
+local LocalPlayer = game:GetService('Players').LocalPlayer
+local gameContentFolder = workspace:FindFirstChild('__GAME_CONTENT')
+local OreFolder = nil
+
+local OreSearch = {}
+
+for _,v in pairs(gameContentFolder:GetDescendants()) do
+	if v:IsA('Folder') and v.Name:lower() == 'stone' then
+		OreFolder = v.Parent
+		break
+	end
+end
+
+for _, ores in pairs(OreFolder:GetChildren()) do
+	table.insert(OreSearch, ores.Name:lower())
+end
+
+
+local function Mine()
+	while AutoMine do
+		local OreTarget = nil
+		local MinamalDistance = math.huge
+
+		local char = LocalPlayer.Character
+		local HRP = char.HumanoidRootPart
+		local Humanoid = char.Humanoid
+		
+		for _, ores in pairs(OreFolder:GetChildren()) do
+			for _, ore in pairs(ores:GetChildren()) do
+				if #ore.Block:GetChildren() >= 4 and ore.Parent.Name:lower() == MINING_ORE_NAME:lower() then
+					local TouchPart = ore.Touch
+					local distance = (TouchPart.Position - HRP.Position).Magnitude
+					if distance < MinamalDistance then
+						OreTarget = TouchPart
+						MinamalDistance = distance
+					end
+				end
+			end
+		end
+		
+		if MinamalDistance >= 10 then
+			Humanoid:MoveTo(OreTarget.Position)
+			Humanoid.MoveToFinished:Wait()
+		end
+		task.wait(.1)
+	end
+end
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
+
+local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
+
+local MyScript = PhantomForcesWindow:NewSection("Main")
+
+MyScript:CreateToggle("Auto Mine", function(value)
+	AutoMine = value
+	Mine()
+end)
+
+MyScript:CreateDropdown('Select Ore', OreSearch, 1, function(text)
+	MINING_ORE_NAME = text
+end)
+
+MyScript:CreateButton("DESTROY GUI", function()
+	AutoMine = false
+	for i, v in pairs(game.CoreGui:GetChildren()) do
+		if v.Name == "WizardLibrary" then
+			v:Destroy()
+		end
+	end
+end)
