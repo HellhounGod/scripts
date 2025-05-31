@@ -44,7 +44,10 @@ local function Mine()
 		end
 		
 		if MinamalDistance >= 10 then
-			Humanoid:MoveTo(OreTarget.Position)
+			local direction = (HRP.Position - OreTarget.Position).Unit
+			local offset = direction * 3
+			local targetPosition = OreTarget.Position + offset
+			Humanoid:MoveTo(targetPosition)
 			Humanoid.MoveToFinished:Wait()
 		end
 		task.wait(.1)
