@@ -2,6 +2,7 @@
 
 local AutoMine = false
 local MINING_ORE_NAME = 'stone'
+local DistFromOre = 5
 
 local LocalPlayer = game:GetService('Players').LocalPlayer
 local gameContentFolder = workspace:FindFirstChild('__GAME_CONTENT')
@@ -43,9 +44,9 @@ local function Mine()
 			end
 		end
 		
-		if MinamalDistance >= 10 then
+		if MinamalDistance >= 10 + DistFromOre / 2 then
 			local direction = (HRP.Position - OreTarget.Position).Unit
-			local offset = direction * 3
+			local offset = direction * DistFromOre 
 			local targetPosition = OreTarget.Position + offset
 			Humanoid:MoveTo(targetPosition)
 			Humanoid.MoveToFinished:Wait()
@@ -59,6 +60,11 @@ local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/blood
 local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
 
 local MyScript = PhantomForcesWindow:NewSection("Main")
+
+
+MyScript:CreateSlider("DistFromOre", 0, 10, 5, false, function(value)
+	DistFromOre = value
+end)
 
 MyScript:CreateToggle("Auto Mine", function(value)
 	AutoMine = value
@@ -77,3 +83,4 @@ MyScript:CreateButton("DESTROY GUI", function()
 		end
 	end
 end)
+
