@@ -1,13 +1,18 @@
-print('B S M 2 AutoMine v. 1.3.1.')
-task.wait(1)
-local AutoMine = false
-local DistFromOre = 4
+print('B S M 2 AutoMine v. 1.4.0.')
+
+local SaveLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Config-Library/main/Main.lua"))()
+
+local MainSettings = {
+	AutoMine = false,
+	DistFromOre = 4,
+	OreSearch = {},
+}
+
+SaveLibrary:LoadConfig("BSM2.json")
 
 local LocalPlayer = game:GetService('Players').LocalPlayer
 local gameContentFolder = workspace:FindFirstChild('__GAME_CONTENT')
 local OreFolder = nil
-
-local OreSearch = {}
 
 for _,v in pairs(gameContentFolder:GetDescendants()) do
 	if v:IsA('Folder') and v.Name:lower() == 'stone' then
@@ -18,12 +23,14 @@ end
 
 for _, ores in pairs(OreFolder:GetChildren()) do
 	--table.insert(OreSearch, ores.Name:lower())
-	OreSearch[ores.Name:lower()] = false
+	if MainSettings['OreSearch'][ores.Name:lower()] == nil then
+		MainSettings['OreSearch'][ores.Name:lower()] = false
+	end
 end
 
 
 local function Mine()
-	while AutoMine do
+	while MainSettings['AutoMine'] do
 		local OreTarget = nil
 		local MinamalDistance = math.huge
 
@@ -32,7 +39,7 @@ local function Mine()
 		local Humanoid = char.Humanoid
 
 		for _, ores in pairs(OreFolder:GetChildren()) do
-			if OreSearch[ores.Name:lower()] then
+			if MainSettings['OreSearch'][ores.Name:lower()] then
 				for _, ore in pairs(ores:GetChildren()) do
 					if #ore.Block:GetChildren() >= 4 then
 						local TouchPart = ore.Touch
@@ -52,9 +59,9 @@ local function Mine()
 			end
 		end
 
-		if MinamalDistance >= DistFromOre + 1 then
+		if MinamalDistance >= MainSettings['DistFromOre'] + 1 then
 			local direction = (HRP.Position - OreTarget.Position).Unit
-			local offset = direction * DistFromOre 
+			local offset = direction * MainSettings['DistFromOre']  
 			local targetPosition = OreTarget.Position + offset
 			Humanoid:MoveTo(targetPosition)
 			Humanoid.MoveToFinished:Wait()
@@ -73,23 +80,23 @@ local SelectOres = PhantomForcesWindow:NewSection("Main")
 
 
 Main:CreateToggle("Auto Mine", function(value)
-	AutoMine = value
+	MainSettings['AutoMine'] = value
 	Mine()
 end)
 
 Main:CreateSlider("DistFromOre", 1, 7, 4, false, function(value)
-	DistFromOre = value
+	MainSettings['DistFromOre']  = value
 end)
 
-for name, status in pairs(OreSearch) do
+for name, status in pairs(MainSettings['OreSearch']) do
 	SelectOres:CreateToggle(name:upper(), function(value)
-		OreSearch[name:lower()] = value
+		MainSettings['OreSearch'][name:lower()] = value
 	end)
 end
 
 
 Main:CreateButton("DESTROY GUI", function()
-	AutoMine = false
+	MainSettings['AutoMine'] = false
 	for i, v in pairs(game.CoreGui:GetChildren()) do
 		if v.Name == "WizardLibrary" then
 			v:Destroy()
@@ -97,3 +104,6 @@ Main:CreateButton("DESTROY GUI", function()
 	end
 end)
 
+game.Players.PlayerRemoving:Connect(function()
+	SaveLibrary:SaveConfig("BSM2.json", MainSettings)
+end)
