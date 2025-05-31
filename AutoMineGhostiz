@@ -1,4 +1,4 @@
--- B S M 2 AutoMine
+print('B S M 2 AutoMine')
 
 local AutoMine = false
 local MINING_ORE_NAME = 'stone'
@@ -79,14 +79,9 @@ MyScript:CreateToggle("Auto Mine", function(value)
 	Mine()
 end)
 
-for name, value in pairs(OreSearch) do
+for name, value in ipairs(OreSearch) do
 	print(name,value)
 end
-
-
-MyScript:CreateDropdown('Select Ore', OreSearch, 1, function(text)
-	MINING_ORE_NAME = text
-end)
 
 MyScript:CreateButton("DESTROY GUI", function()
 	AutoMine = false
