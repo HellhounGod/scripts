@@ -44,6 +44,12 @@ local function Mine()
 			end
 		end
 		
+		for _,v in pairs(OreTarget:GetChildren()) do
+			if v:IsA('MeshPart') or v:IsA('BasePart') then
+				v.CanCollide = false
+			end
+		end
+		
 		if MinamalDistance >= 10 + DistFromOre / 2 then
 			local direction = (HRP.Position - OreTarget.Position).Unit
 			local offset = direction * DistFromOre 
