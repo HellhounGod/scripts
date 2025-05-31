@@ -1,4 +1,4 @@
-print('B S M 2 AutoMine v. 1.4.1.')
+print('B S M 2 AutoMine v. 1.4.2.')
 local HttpService = game:GetService("HttpService")
 local LocalPlayer = game:GetService('Players').LocalPlayer
 local gameContentFolder = workspace:FindFirstChild('__GAME_CONTENT')
@@ -11,8 +11,9 @@ local Settings = {
 	OreSearch = {},
 }
 
-local loadedData = readfile("BSM2.json")
-Settings = HttpService:JSONDecode(loadedData)
+local loadedData = readfile("BSM2.json") or nil
+if loadedData then Settings = HttpService:JSONDecode(loadedData) end
+
 
 for _,v in pairs(gameContentFolder:GetDescendants()) do
 	if v:IsA('Folder') and v.Name:lower() == 'stone' then
