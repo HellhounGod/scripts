@@ -1,4 +1,4 @@
-print('B S M 2 AutoMine v. 1.2.0.')
+print('B S M 2 AutoMine v. 1.3.0.')
 task.wait(1)
 local AutoMine = false
 local DistFromOre = 4
@@ -68,26 +68,27 @@ local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/blood
 
 local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
 
-local MyScript = PhantomForcesWindow:NewSection("Main")
+local Main = PhantomForcesWindow:NewSection("Main")
+local SelectOres = PhantomForcesWindow:NewSection("Main")
 
 
-MyScript:CreateSlider("DistFromOre", 1, 7, 4, false, function(value)
+Main:CreateSlider("DistFromOre", 1, 7, 4, false, function(value)
 	DistFromOre = value
 end)
 
-MyScript:CreateToggle("Auto Mine", function(value)
+Main:CreateToggle("Auto Mine", function(value)
 	AutoMine = value
 	Mine()
 end)
 
 for name, status in pairs(OreSearch) do
-	MyScript:CreateToggle(name:upper(), function(value)
+	SelectOres:CreateToggle(name:upper(), function(value)
 		OreSearch[name:lower()] = value
 	end)
 end
 
 
-MyScript:CreateButton("DESTROY GUI", function()
+Main:CreateButton("DESTROY GUI", function()
 	AutoMine = false
 	for i, v in pairs(game.CoreGui:GetChildren()) do
 		if v.Name == "WizardLibrary" then
