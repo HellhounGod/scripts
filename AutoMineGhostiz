@@ -62,7 +62,7 @@ local function Mine()
 		task.wait(.1)
 	end
 end
-
+task.wait()
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
 
 local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
@@ -79,10 +79,6 @@ MyScript:CreateToggle("Auto Mine", function(value)
 	Mine()
 end)
 
-for name, value in ipairs(OreSearch) do
-	print(name,value)
-end
-
 MyScript:CreateButton("DESTROY GUI", function()
 	AutoMine = false
 	for i, v in pairs(game.CoreGui:GetChildren()) do
@@ -91,3 +87,7 @@ MyScript:CreateButton("DESTROY GUI", function()
 		end
 	end
 end)
+
+for name, value in ipairs(OreSearch) do
+	print(name,value)
+end
