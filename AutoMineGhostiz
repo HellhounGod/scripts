@@ -1,8 +1,8 @@
-print('B S M 2 AutoMine')
+-- B S M 2 AutoMine
 
 local AutoMine = false
 local MINING_ORE_NAME = 'stone'
-local DistFromOre = 4
+local DistFromOre = 5
 
 local LocalPlayer = game:GetService('Players').LocalPlayer
 local gameContentFolder = workspace:FindFirstChild('__GAME_CONTENT')
@@ -18,7 +18,7 @@ for _,v in pairs(gameContentFolder:GetDescendants()) do
 end
 
 for _, ores in pairs(OreFolder:GetChildren()) do
-	OreSearch[ores.Name:lower()] = false
+	table.insert(OreSearch, ores.Name:lower())
 end
 
 
@@ -32,7 +32,7 @@ local function Mine()
 		local Humanoid = char.Humanoid
 
 		for _, ores in pairs(OreFolder:GetChildren()) do
-			if OreSearch[ores.Name:lower()] == true then
+			if ores.Name:lower() == MINING_ORE_NAME:lower() then
 				for _, ore in pairs(ores:GetChildren()) do
 					if #ore.Block:GetChildren() >= 4 then
 						local TouchPart = ore.Touch
@@ -62,7 +62,7 @@ local function Mine()
 		task.wait(.1)
 	end
 end
-task.wait()
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
 
 local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
@@ -70,13 +70,17 @@ local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
 local MyScript = PhantomForcesWindow:NewSection("Main")
 
 
-MyScript:CreateSlider("DistFromOre", 1, 7, 4, false, function(value)
+MyScript:CreateSlider("DistFromOre", 0, 10, 5, false, function(value)
 	DistFromOre = value
 end)
 
 MyScript:CreateToggle("Auto Mine", function(value)
 	AutoMine = value
 	Mine()
+end)
+
+MyScript:CreateDropdown('Select Ore', OreSearch, 1, function(text)
+	MINING_ORE_NAME = text
 end)
 
 MyScript:CreateButton("DESTROY GUI", function()
@@ -88,6 +92,3 @@ MyScript:CreateButton("DESTROY GUI", function()
 	end
 end)
 
-for name, value in ipairs(OreSearch) do
-	print(name,value)
-end
