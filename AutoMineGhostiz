@@ -1,4 +1,4 @@
-print('✅B S M 2 AutoMine v. 1.5.0.✅')
+print('✅B S M 2 AutoMine v. 1.5.1.✅')
 
 -- СЕРВІСИ
 local HttpService = game:GetService("HttpService")
@@ -133,7 +133,7 @@ for name, status in pairs(OreSearch) do
 	end)
 end
 
-PhantomForcesWindow:CreateButton("DESTROY GUI", function()
+Main:CreateButton("DESTROY GUI", function()
 	AutoMine = false
 	SaveSettings()
 	for i, v in pairs(game.CoreGui:GetChildren()) do
