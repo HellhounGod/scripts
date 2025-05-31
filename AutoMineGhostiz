@@ -80,10 +80,9 @@ MyScript:CreateToggle("Auto Mine", function(value)
 end)
 
 for name, value in ipairs(OreSearch) do
-	MyScript:CreateButton(tostring(name), function()
-		print(value)
-	end)
+	print(name,value)
 end
+
 
 MyScript:CreateDropdown('Select Ore', OreSearch, 1, function(text)
 	MINING_ORE_NAME = text
