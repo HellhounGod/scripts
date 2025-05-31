@@ -79,8 +79,8 @@ MyScript:CreateToggle("Auto Mine", function(value)
 	Mine()
 end)
 
-for name, value in pairs(OreSearch) do
-	MyScript:CreateButton(name, function()
+for name, value in ipairs(OreSearch) do
+	MyScript:CreateButton(tostring(name), function()
 		print(value)
 	end)
 end
