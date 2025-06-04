@@ -13,6 +13,7 @@ local filePath = folderName .. "/" .. fileName
 
 -- ЗМІННІ
 local AutoMine = false
+local AutoShard = false
 local DistFromOre = 4
 local OreSearch = {}
 
@@ -62,6 +63,94 @@ end
 
 -- ЗАВАНТАЖУЄМО ПОЧАТКОВІ НАЛАШТУВАННЯ
 LoadSettings()
+
+local function Shards()
+	while AutoShard do
+		local Players = game:GetService("Players")
+local PathfindingService = game:GetService("PathfindingService")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+local startPosition = hrp.Position
+
+local function getShardFolder()
+    local gameContent = workspace:FindFirstChild("__GAME_CONTENT")
+    if not gameContent then return nil end
+    return gameContent:FindFirstChild("FireBurstShards")
+end
+
+local function moveToPosition(targetPos)
+    local path = PathfindingService:CreatePath({
+        AgentRadius = 2,
+        AgentHeight = 5,
+        AgentCanJump = true,
+        AgentCanClimb = true,
+        Costs = {}
+    })
+
+    path:ComputeAsync(hrp.Position, targetPos)
+
+    if path.Status == Enum.PathStatus.Success then
+        for _, waypoint in ipairs(path:GetWaypoints()) do
+            humanoid:MoveTo(waypoint.Position)
+            humanoid.MoveToFinished:Wait()
+        end
+    else
+        warn("Неможливо побудувати шлях.")
+    end
+end
+
+local function findTargetPositionInModel(model)
+    -- Якщо є PrimaryPart
+    if model.PrimaryPart then
+        return model.PrimaryPart.Position
+    end
+
+    -- Інакше шукаємо перший BasePart
+    for _, part in ipairs(model:GetDescendants()) do
+        if part:IsA("BasePart") then
+            return part.Position
+        end
+    end
+
+    return nil
+end
+
+local function searchAndMove()
+    local folder = getShardFolder()
+    if not folder then
+        warn("Не знайдено папку з шардом.")
+        return
+    end
+
+    local models = {}
+
+    for _, obj in ipairs(folder:GetChildren()) do
+        if obj:IsA("Model") then
+            table.insert(models, obj)
+        end
+    end
+
+    if #models == 0 then
+        print("Шарди відсутні. Повертаємось на старт.")
+        moveToPosition(startPosition)
+        return
+    end
+
+    for _, model in ipairs(models) do
+        local pos = findTargetPositionInModel(model)
+        if pos then
+            moveToPosition(pos)
+            wait(0.5)
+        end
+    end
+end
+ wait(10)
+	end
+end
 
 -- ФУНКЦІЯ АВТОМАЙНУ
 local function Mine()
@@ -119,6 +208,11 @@ Main:CreateToggle("Auto Mine", function(value)
 	AutoMine = value
 	SaveSettings()
 	Mine()
+end)
+Main:CreateToggle("Auto Shard", function(value)
+	AutoShard = value
+	SaveSettings()
+	Shards()
 end)
 
 Main:CreateSlider("DistFromOre", 1, 7, DistFromOre, false, function(value)
