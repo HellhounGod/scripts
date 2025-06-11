@@ -1,6 +1,3 @@
-print('✅B S M 2 AutoMine v. 1.5.1.✅')
-
-
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
