@@ -1,4 +1,4 @@
-print('✅B S M 2 AutoMine v. 1.8.3✅')
+print('✅B S M 2 AutoMine v. 1.8.4✅')
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
@@ -133,7 +133,6 @@ local function SearchShards()
 	if #ShardsFolder:GetChildren() == 0 then return nil end
 
 	for _, shard in pairs(ShardsFolder:GetChildren()) do
-		print(`Find: {shard.Name}`)
 		return shard
 	end
 end
@@ -143,9 +142,7 @@ local function Shards()
 		local Shardtarget = SearchOre()
 
 		local Humanoid = character.Humanoid
-
 		if Shardtarget then
-			print('Teleport')
 			if PlayerTeleport then
 				HumanoidRootPart.CFrame = CFrame.new(Shardtarget.PrimaryPart.Position)
 			else
@@ -153,7 +150,6 @@ local function Shards()
 				Humanoid.MoveToFinished:Wait()
 			end
 		else
-			print('Wait')
 			if PlayerTeleport then
 				HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-142,6,-1586))
 			else
@@ -186,12 +182,12 @@ w1:Toggle(
 
 w1:Toggle(
 	"Auto Shards",
-	"am",
+	"as",
 	AutoShard,
 	function(toggled)
 		AutoShard = toggled
 		SaveSettings()
-		if AutoShard then print('Start auto shard') Shards() end
+		if AutoShard then Shards() end
 	end
 ) -- Text, Flag, Enabled, Callback, Flag Location (Optional)
 
