@@ -1,4 +1,4 @@
-print('✅B S M 2 AutoMine v. 1.6.3.✅')
+print('✅B S M 2 AutoMine v. 1.8.3✅')
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
@@ -16,7 +16,7 @@ local filePath = folderName .. "/" .. fileName
 local AutoMine = false
 local AutoShard = false
 local DistFromOre = 4
-local OreTeleport = false
+local PlayerTeleport = false
 local OreSearch = {}
 
 if not isfolder(folderName) then
@@ -28,10 +28,14 @@ local function LoadSettings()
 	if isfile(filePath) then
 		local content = readfile(filePath)
 		local data = HttpService:JSONDecode(content)
-		AutoMine = data.AutoMine or false
-		OreTeleport = data.OreTeleport or false
-		DistFromOre = data.DistFromOre or 4
-		OreSearch = data.OreSearch or {}
+		if data then
+			AutoMine = data.AutoMine
+			AutoShard = data.AutoShard
+			PlayerTeleport = data.PlayerTeleport
+			DistFromOre = data.DistFromOre
+			OreSearch = data.OreSearch
+		end
+		
 	end
 end
 
@@ -39,9 +43,10 @@ end
 local function SaveSettings()
 	local data = {
 		AutoMine = AutoMine,
+		AutoShard = AutoShard,
 		DistFromOre = DistFromOre,
 		OreSearch = OreSearch,
-		OreTeleport = OreTeleport
+		PlayerTeleport = PlayerTeleport
 	}
 	local json = HttpService:JSONEncode(data)
 	writefile(filePath, json)
@@ -72,13 +77,13 @@ local function SearchOre()
 
 	local char = LocalPlayer.Character
 	local HRP = char.HumanoidRootPart
-	
+
 	if #OreFolder:GetChildren() == 0 then return nil end
-	
+
 	for _, ores in pairs(OreFolder:GetChildren()) do
 		if OreSearch[ores.Name:lower()] then
 			for _, ore in pairs(ores:GetChildren()) do
-				if #ore.Block:GetChildren() >= 4 then
+				if #ore.Block:GetChildren() >= 3 then
 					local TouchPart = ore.Touch
 					local distance = (TouchPart.Position - HRP.Position).Magnitude
 					if distance < MinimalDistance then
@@ -89,8 +94,6 @@ local function SearchOre()
 			end
 		end
 	end
-		
-	
 
 	return OreTarget, MinimalDistance
 end
@@ -112,7 +115,7 @@ local function Mine()
 				local direction = (HumanoidRootPart.Position - OreTarget.Position).Unit
 				local offset = direction * DistFromOre 
 				local targetPosition = OreTarget.Position + offset
-				if OreTeleport then
+				if PlayerTeleport then
 					HumanoidRootPart.CFrame = CFrame.new(OreTarget.Position)
 				else
 					Humanoid:MoveTo(targetPosition)
@@ -124,44 +127,129 @@ local function Mine()
 		task.wait(.1)
 	end
 end
-SaveSettings()
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
-local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
-local Main = PhantomForcesWindow:NewSection("Main")
-local SelectOres = PhantomForcesWindow:NewSection("Select Ores")
+local function SearchShards()
+	local ShardsFolder = gameContentFolder:FindFirstChild('FireBurstShards') 
+	if #ShardsFolder:GetChildren() == 0 then return nil end
 
-
-Main:CreateToggle("Auto Mine", function(value)
-	AutoMine = value
-	SaveSettings()
-	Mine()
-end)
-	
-Main:CreateToggle("Auto Mine", function(value)
-	AutoMine = value
-	SaveSettings()
-	Mine()
-end)
-
-Main:CreateSlider("DistFromOre", 1, 7, DistFromOre, false, function(value)
-	DistFromOre = value
-	SaveSettings()
-end)
-
-for name, status in pairs(OreSearch) do
-	SelectOres:CreateToggle(name:upper(), function(value)
-		OreSearch[name:lower()] = value
-		SaveSettings()
-	end)
+	for _, shard in pairs(ShardsFolder:GetChildren()) do
+		print(`Find: {shard.Name}`)
+		return shard
+	end
 end
 
-Main:CreateButton("DESTROY GUI", function()
-	AutoMine = false
-	SaveSettings()
-	for i, v in pairs(game.CoreGui:GetChildren()) do
-		if v.Name == "WizardLibrary" then
-			v:Destroy()
+local function Shards()
+	while AutoShard do
+		local Shardtarget = SearchOre()
+
+		local Humanoid = character.Humanoid
+
+		if Shardtarget then
+			print('Teleport')
+			if PlayerTeleport then
+				HumanoidRootPart.CFrame = CFrame.new(Shardtarget.PrimaryPart.Position)
+			else
+				Humanoid:MoveTo(Shardtarget.PrimaryPart.Position)
+				Humanoid.MoveToFinished:Wait()
+			end
+		else
+			print('Wait')
+			if PlayerTeleport then
+				HumanoidRootPart.CFrame = CFrame.new(Vector3.new(-142,6,-1586))
+			else
+				Humanoid:MoveTo(Vector3.new(-142,6,-1586))
+				Humanoid.MoveToFinished:Wait()
+			end
+		end
+
+		task.wait(.1)
+	end
+end
+
+SaveSettings()
+
+local library = loadstring(game.HttpGet(game, "https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/0x"))()
+
+local w1 = library:Window("Main")
+local OreWindow = library:Window("Select Ores")
+
+w1:Toggle(
+	"Auto Mine",
+	"am",
+	AutoMine,
+	function(toggled)
+		AutoMine = toggled
+		SaveSettings()
+		if AutoShard then Mine() end
+	end
+) -- Text, Flag, Enabled, Callback, Flag Location (Optional)
+
+w1:Toggle(
+	"Auto Shards",
+	"am",
+	AutoShard,
+	function(toggled)
+		AutoShard = toggled
+		SaveSettings()
+		if AutoShard then print('Start auto shard') Shards() end
+	end
+) -- Text, Flag, Enabled, Callback, Flag Location (Optional)
+
+w1:Toggle(
+	"Walk/Teleport",
+	"atp",
+	PlayerTeleport,
+	function(toggled)
+		PlayerTeleport = toggled
+		SaveSettings()
+	end
+) -- Text, Flag, Enabled, Callback, Flag Location (Optional)
+
+w1:Slider(
+	"DistFromOre",
+	"dfo",
+	1,
+	7,
+	function(value)
+		DistFromOre = value
+		SaveSettings()
+	end,
+	DistFromOre
+) -- Text, Flag, Minimum, Maximum, Callback, Default (Optional), Flag Location (Optional)
+
+w1:Slider(
+	"WalkSpeed",
+	"WS",
+	16,
+	60,
+	function(value)
+		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+	end,
+	40
+) -- Text, Flag, Minimum, Maximum, Callback, Default (Optional), Flag Location (Optional)
+
+w1:Button(
+	"Destroy GUI",
+	function()
+		AutoMine = false
+		for i, v in pairs(game.CoreGui:GetChildren()) do
+			if v:FindFirstChild("Top") then
+				v:Destroy()
+			end
 		end
 	end
-end)
+) -- Text, Callback
+
+for name, status in pairs(OreSearch) do
+	OreWindow:Toggle(
+		name,
+		nil,
+		OreSearch[name:lower()],
+		function(toggled)
+			OreSearch[name:lower()] = toggled
+			SaveSettings()
+		end
+	) -- Text, Flag, Enabled, Callback, Flag Location (Optional)
+end
+
+w1:Label("G H O S T I Z")
