@@ -1,28 +1,30 @@
 print('✅B S M 2 AutoMine v. 1.5.1.✅')
 
--- СЕРВІСИ
+
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HumanoidRootPart = character:WaitForChild('HumanoidRootPart')
 local gameContentFolder = workspace:FindFirstChild('__GAME_CONTENT')
 
--- НАЛАШТУВАННЯ ФАЙЛУ
+
 local folderName = "BSM2_by_GHOSTIZ"
 local fileName = "settings.json"
 local filePath = folderName .. "/" .. fileName
 
--- ЗМІННІ
+
 local AutoMine = false
 local AutoShard = false
 local DistFromOre = 4
 local OreSearch = {}
 
--- ПАПКА ТА ФАЙЛ З НАЛАШТУВАННЯМИ
+
 if not isfolder(folderName) then
 	makefolder(folderName)
 end
 
--- ФУНКЦІЯ ЗАВАНТАЖЕННЯ НАЛАШТУВАНЬ
+
 local function LoadSettings()
 	if isfile(filePath) then
 		local content = readfile(filePath)
@@ -33,7 +35,7 @@ local function LoadSettings()
 	end
 end
 
--- ФУНКЦІЯ ЗБЕРЕЖЕННЯ НАЛАШТУВАНЬ
+
 local function SaveSettings()
 	local data = {
 		AutoMine = AutoMine,
@@ -44,7 +46,7 @@ local function SaveSettings()
 	writefile(filePath, json)
 end
 
--- ОТРИМУЄМО РУДИ
+
 local OreFolder = nil
 for _,v in pairs(gameContentFolder:GetDescendants()) do
 	if v:IsA('Folder') and v.Name:lower() == 'stone' then
@@ -53,7 +55,7 @@ for _,v in pairs(gameContentFolder:GetDescendants()) do
 	end
 end
 
--- ЗАПОВНЮЄМО ORESEARCH
+
 for _, ores in pairs(OreFolder:GetChildren()) do
 	local name = ores.Name:lower()
 	if OreSearch[name] == nil then
@@ -61,131 +63,133 @@ for _, ores in pairs(OreFolder:GetChildren()) do
 	end
 end
 
--- ЗАВАНТАЖУЄМО ПОЧАТКОВІ НАЛАШТУВАННЯ
+
 LoadSettings()
 
 local function Shards()
 	while AutoShard do
 		local Players = game:GetService("Players")
-local PathfindingService = game:GetService("PathfindingService")
+		local PathfindingService = game:GetService("PathfindingService")
 
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-local hrp = character:WaitForChild("HumanoidRootPart")
+		local player = Players.LocalPlayer
+		local character = player.Character or player.CharacterAdded:Wait()
+		local humanoid = character:WaitForChild("Humanoid")
+		local hrp = character:WaitForChild("HumanoidRootPart")
 
-local startPosition = hrp.Position
+		local startPosition = hrp.Position
 
-local function getShardFolder()
-    local gameContent = workspace:FindFirstChild("__GAME_CONTENT")
-    if not gameContent then return nil end
-    return gameContent:FindFirstChild("FireBurstShards")
-end
+		local function getShardFolder()
+			local gameContent = workspace:FindFirstChild("__GAME_CONTENT")
+			if not gameContent then return nil end
+			return gameContent:FindFirstChild("FireBurstShards")
+		end
 
-local function moveToPosition(targetPos)
-    local path = PathfindingService:CreatePath({
-        AgentRadius = 2,
-        AgentHeight = 5,
-        AgentCanJump = true,
-        AgentCanClimb = true,
-        Costs = {}
-    })
+		local function moveToPosition(targetPos)
+			local path = PathfindingService:CreatePath({
+				AgentRadius = 2,
+				AgentHeight = 5,
+				AgentCanJump = true,
+				AgentCanClimb = true,
+				Costs = {}
+			})
 
-    path:ComputeAsync(hrp.Position, targetPos)
+			path:ComputeAsync(hrp.Position, targetPos)
 
-    if path.Status == Enum.PathStatus.Success then
-        for _, waypoint in ipairs(path:GetWaypoints()) do
-            humanoid:MoveTo(waypoint.Position)
-            humanoid.MoveToFinished:Wait()
-        end
-    else
-        warn("Неможливо побудувати шлях.")
-    end
-end
-
-local function findTargetPositionInModel(model)
-    -- Якщо є PrimaryPart
-    if model.PrimaryPart then
-        return model.PrimaryPart.Position
-    end
-
-    -- Інакше шукаємо перший BasePart
-    for _, part in ipairs(model:GetDescendants()) do
-        if part:IsA("BasePart") then
-            return part.Position
-        end
-    end
-
-    return nil
-end
-
-local function searchAndMove()
-    local folder = getShardFolder()
-    if not folder then
-        warn("Не знайдено папку з шардом.")
-        return
-    end
-
-    local models = {}
-
-    for _, obj in ipairs(folder:GetChildren()) do
-        if obj:IsA("Model") then
-            table.insert(models, obj)
-        end
-    end
-
-    if #models == 0 then
-        print("Шарди відсутні. Повертаємось на старт.")
-        moveToPosition(startPosition)
-        return
-    end
-
-    for _, model in ipairs(models) do
-        local pos = findTargetPositionInModel(model)
-        if pos then
-            moveToPosition(pos)
-            wait(0.5)
-        end
-    end
-end
- wait(10)
-	end
-end
-
--- ФУНКЦІЯ АВТОМАЙНУ
-local function Mine()
-	while AutoMine do
-		local OreTarget = nil
-		local MinamalDistance = math.huge
-
-		local char = LocalPlayer.Character
-		local HRP = char.HumanoidRootPart
-		local Humanoid = char.Humanoid
-
-		for _, ores in pairs(OreFolder:GetChildren()) do
-			if OreSearch[ores.Name:lower()] then
-				for _, ore in pairs(ores:GetChildren()) do
-					if #ore.Block:GetChildren() >= 4 then
-						local TouchPart = ore.Touch
-						local distance = (TouchPart.Position - HRP.Position).Magnitude
-						if distance < MinamalDistance then
-							OreTarget = TouchPart
-							MinamalDistance = distance
-						end
-					end
+			if path.Status == Enum.PathStatus.Success then
+				for _, waypoint in ipairs(path:GetWaypoints()) do
+					humanoid:MoveTo(waypoint.Position)
+					humanoid.MoveToFinished:Wait()
 				end
 			end
 		end
 
+		local function findTargetPositionInModel(model)
+			if model.PrimaryPart then
+				return model.PrimaryPart.Position
+			end
+
+			for _, part in ipairs(model:GetDescendants()) do
+				if part:IsA("BasePart") then
+					return part.Position
+				end
+			end
+
+			return nil
+		end
+
+		local function searchAndMove()
+			local folder = getShardFolder()
+			if not folder then
+				return
+			end
+
+			local models = {}
+
+			for _, obj in ipairs(folder:GetChildren()) do
+				if obj:IsA("Model") then
+					table.insert(models, obj)
+				end
+			end
+
+			if #models == 0 then
+				moveToPosition(startPosition)
+				return
+			end
+
+			for _, model in ipairs(models) do
+				local pos = findTargetPositionInModel(model)
+				if pos then
+					moveToPosition(pos)
+					wait(0.5)
+				end
+			end
+		end
+		wait(10)
+	end
+end
+
+local function SearchOre()
+	local OreTarget = nil
+	local MinimalDistance = math.huge
+
+	local char = LocalPlayer.Character
+	local HRP = char.HumanoidRootPart
+	
+	if #OreFolder:GetChildren() == 0 then return nil
+	
+	for _, ores in pairs(OreFolder:GetChildren()) do
+		if OreSearch[ores.Name:lower()] then
+			for _, ore in pairs(ores:GetChildren()) do
+				if #ore.Block:GetChildren() >= 4 then
+					local TouchPart = ore.Touch
+					local distance = (TouchPart.Position - HRP.Position).Magnitude
+					if distance < MinimalDistance then
+						OreTarget = TouchPart
+						MinimalDistance = distance
+					end
+				end
+			end
+		end
+	end
+
+	return OreTarget, MinimalDistance
+end
+
+local function Mine()
+	while AutoMine do
+		local OreTarget, MinimalDistance = SearchOre()
+
+		local Humanoid = character.Humanoid
+
 		if OreTarget then
-			for _,v in pairs(OreTarget:GetChildren()) do
+			for _,v in pairs(OreTarget:GetDescendants()) do
 				if v:IsA('MeshPart') or v:IsA('BasePart') then
 					v.CanCollide = false
 				end
 			end
 
-			if MinamalDistance >= DistFromOre + 1 then
-				local direction = (HRP.Position - OreTarget.Position).Unit
+			if MinimalDistance >= DistFromOre + 1 then
+				local direction = (HumanoidRootPart.Position - OreTarget.Position).Unit
 				local offset = direction * DistFromOre 
 				local targetPosition = OreTarget.Position + offset
 				Humanoid:MoveTo(targetPosition)
@@ -197,13 +201,13 @@ local function Mine()
 	end
 end
 SaveSettings()
--- GUI
+
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
 local PhantomForcesWindow = Library:NewWindow("GHOSTIZ")
 local Main = PhantomForcesWindow:NewSection("Main")
 local SelectOres = PhantomForcesWindow:NewSection("Select Ores")
 
--- GUI ЕЛЕМЕНТИ
+
 Main:CreateToggle("Auto Mine", function(value)
 	AutoMine = value
 	SaveSettings()
